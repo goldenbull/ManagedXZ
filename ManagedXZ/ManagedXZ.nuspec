@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://raw.githubusercontent.com/goldenbull/ManagedXZ/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/goldenbull/ManagedXZ</projectUrl>
+    <iconUrl>https://assets-cdn.github.com/images/icons/emoji/unicode/1f604.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>alpha version.</releaseNotes>
+    <copyright>Copyleft 2016</copyright>
+    <tags>xz lzma lzma2</tags>
+  </metadata>
+  <files>
+    <file src="build/ManagedXZ.targets" target="/build/ManagedXZ.targets" />
+    <file src="build/liblzma_x86.dll" target="/build/liblzma_x86.dll" />
+    <file src="build/liblzma_amd64.dll" target="/build/liblzma_amd64.dll" />
+  </files>
+</package>

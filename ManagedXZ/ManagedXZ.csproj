@@ -40,15 +40,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Native.cs" />
+    <Compile Include="Types.cs" />
     <Compile Include="XZCompressStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XZDecompressStream.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="liblzma.dll">
+    <Content Include="liblzma_x86.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="liblzma64.dll">
+    <Content Include="liblzma_amd64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

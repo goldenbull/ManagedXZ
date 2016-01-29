@@ -9,6 +9,11 @@ namespace ManagedXZ
 {
     public class XZCompressStream : Stream
     {
+        public XZCompressStream()
+        {
+            Native.CheckSize();
+        }
+
         public override void Flush()
         {
             throw new NotImplementedException();

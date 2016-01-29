@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ManagedXZ;
 
 namespace Examples
 {
@@ -10,6 +11,7 @@ namespace Examples
     {
         private static void Main(string[] args)
         {
+            XZCompressStream stream = new XZCompressStream();
         }
     }
 }

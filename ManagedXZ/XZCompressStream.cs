@@ -11,16 +11,11 @@ namespace ManagedXZ
         {
         }
 
-        public XZCompressStream(Stream stream, int threads) : this(stream, threads, 1024*64)
-        {
-        }
-
-        public XZCompressStream(Stream stream, int threads, int bufferSize)
+        public XZCompressStream(Stream stream, int threads)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
             if (!stream.CanWrite) throw new ArgumentException("stream is not writable");
             if (threads <= 0) throw new ArgumentOutOfRangeException(nameof(threads));
-            if (bufferSize <= 0) throw new ArgumentOutOfRangeException(nameof(bufferSize));
 
             // adjust thread numbers
             if (threads > Environment.ProcessorCount)
@@ -31,17 +26,15 @@ namespace ManagedXZ
 
             _stream = stream;
             _threads = threads;
-            _bufferSize = bufferSize;
             Init();
         }
 
         private readonly Stream _stream;
         private readonly int _threads;
-        private readonly int _bufferSize;
         private readonly lzma_stream _lzma_stream = new lzma_stream();
         private IntPtr _inbuf;
         private IntPtr _outbuf;
-        private const int OUTBUFSIZE = 1024*64; // we do not need a big outbuf
+        private const int BUFSIZE = 1024*32; // we do not need a big outbuf
 
         private void Init()
         {
@@ -70,14 +63,14 @@ namespace ManagedXZ
             if (ret != lzma_ret.LZMA_OK)
                 throw new Exception($"Can not create lzma stream: {ret}");
 
-            _inbuf = Marshal.AllocHGlobal(_bufferSize);
-            _outbuf = Marshal.AllocHGlobal(OUTBUFSIZE);
+            _inbuf = Marshal.AllocHGlobal(BUFSIZE);
+            _outbuf = Marshal.AllocHGlobal(BUFSIZE);
 
             // init lzma_stream
             _lzma_stream.next_in = _inbuf;
             _lzma_stream.next_out = _outbuf;
             _lzma_stream.avail_in = UIntPtr.Zero;
-            _lzma_stream.avail_out = (UIntPtr)OUTBUFSIZE;
+            _lzma_stream.avail_out = (UIntPtr)BUFSIZE;
         }
 
         public override bool CanRead => false;
@@ -109,7 +102,7 @@ namespace ManagedXZ
                     // Fill the input buffer if it is empty.
                     if (_lzma_stream.avail_in == UIntPtr.Zero)
                     {
-                        int bytesToProcess = Math.Min(count - bytesProcessed, _bufferSize);
+                        int bytesToProcess = Math.Min(count - bytesProcessed, BUFSIZE);
                         if (bytesToProcess == 0) break; // no more data to compress
                         _lzma_stream.next_in = _inbuf;
                         _lzma_stream.avail_in = (UIntPtr)bytesToProcess;
@@ -125,13 +118,13 @@ namespace ManagedXZ
                     // check output buffer
                     if (_lzma_stream.avail_out == UIntPtr.Zero)
                     {
-                        byte[] data = new byte[OUTBUFSIZE];
+                        byte[] data = new byte[BUFSIZE];
                         Marshal.Copy(_outbuf, data, 0, data.Length);
                         _stream.Write(data, 0, data.Length);
 
                         // Reset next_out and avail_out.
                         _lzma_stream.next_out = _outbuf;
-                        _lzma_stream.avail_out = (UIntPtr)OUTBUFSIZE;
+                        _lzma_stream.avail_out = (UIntPtr)BUFSIZE;
                     }
                 }
             }
@@ -157,13 +150,13 @@ namespace ManagedXZ
                     // write output buffer to underlying stream
                     if (_lzma_stream.avail_out == UIntPtr.Zero || ret == lzma_ret.LZMA_STREAM_END)
                     {
-                        byte[] data = new byte[OUTBUFSIZE - (uint)_lzma_stream.avail_out];
+                        byte[] data = new byte[BUFSIZE - (uint)_lzma_stream.avail_out];
                         Marshal.Copy(_outbuf, data, 0, data.Length);
                         _stream.Write(data, 0, data.Length);
 
                         // Reset next_out and avail_out.
                         _lzma_stream.next_out = _outbuf;
-                        _lzma_stream.avail_out = (UIntPtr)OUTBUFSIZE;
+                        _lzma_stream.avail_out = (UIntPtr)BUFSIZE;
                     }
 
                     if (ret == lzma_ret.LZMA_STREAM_END)

@@ -34,6 +34,14 @@ namespace ManagedXZ
             lzma_auto_decoder = GetFunction<lzma_auto_decoder_delegate>("lzma_auto_decoder");
         }
 
+        public static void CheckSize()
+        {
+            Console.WriteLine($"sizeof(lzma_stream)={Marshal.SizeOf(typeof(lzma_stream))}");
+            Console.WriteLine($"sizeof(lzma_mt)={Marshal.SizeOf(typeof(lzma_mt))}");
+        }
+
+        #region dll helpers
+
         private static T GetFunction<T>(string fname)
         {
             var ptr = GetProcAddress(_handle, fname);
@@ -51,25 +59,28 @@ namespace ManagedXZ
         [DllImport("kernel32.dll")]
         private static extern IntPtr GetProcAddress(IntPtr moduleHandle, string procname);
 
-        public static void CheckSize()
-        {
-            Console.WriteLine($"sizeof(lzma_stream)={Marshal.SizeOf(typeof(lzma_stream))}");
-            Console.WriteLine($"sizeof(lzma_mt)={Marshal.SizeOf(typeof(lzma_mt))}");
-        }
+        #endregion
 
+        #region xz functions
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate lzma_ret lzma_code_delegate(lzma_stream strm, lzma_action action);
 
         internal static lzma_code_delegate lzma_code;
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void lzma_end_delegate(lzma_stream strm);
 
         internal static lzma_end_delegate lzma_end;
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void lzma_get_progress_delegate(lzma_stream strm, out UInt64 progress_in, out UInt64 progress_out);
 
         internal static lzma_get_progress_delegate lzma_get_progress;
 
         //extern LZMA_API(uint64_t) lzma_easy_decoder_memusage(uint32_t preset);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate lzma_ret lzma_easy_encoder_delegate(lzma_stream strm, UInt32 preset, lzma_check check);
 
         internal static lzma_easy_encoder_delegate lzma_easy_encoder;
@@ -77,6 +88,8 @@ namespace ManagedXZ
         //extern LZMA_API(lzma_ret) lzma_easy_buffer_encode(uint32_t preset, lzma_check check,const lzma_allocator* allocator,const uint8_t*in, size_t in_size,uint8_t*out, size_t* out_pos, size_t out_size) lzma_nothrow;
         //extern LZMA_API(lzma_ret) lzma_stream_encoder(lzma_stream* strm,const lzma_filter* filters, lzma_check check)
         //extern LZMA_API(uint64_t) lzma_stream_encoder_mt_memusage(const lzma_mt* options) lzma_nothrow lzma_attr_pure;
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate lzma_ret lzma_stream_encoder_mt_delegate(lzma_stream strm, lzma_mt options);
 
         internal static lzma_stream_encoder_mt_delegate lzma_stream_encoder_mt;
@@ -92,11 +105,15 @@ namespace ManagedXZ
         internal const UInt32 LZMA_IGNORE_CHECK = 0x10;
         internal const UInt32 LZMA_CONCATENATED = 0x08;
         //extern LZMA_API(lzma_ret) lzma_stream_decoder(lzma_stream* strm, uint64_t memlimit, uint32_t flags)
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate lzma_ret lzma_auto_decoder_delegate(lzma_stream strm, UInt64 memlimit, UInt32 flags);
 
         internal static lzma_auto_decoder_delegate lzma_auto_decoder;
 
         //extern LZMA_API(lzma_ret) lzma_alone_decoder(lzma_stream* strm, uint64_t memlimit)
         //extern LZMA_API(lzma_ret) lzma_stream_buffer_decode(uint64_t* memlimit, uint32_t flags,const lzma_allocator* allocator,const uint8_t*in, size_t *in_pos, size_t in_size,uint8_t *out, size_t *out_pos, size_t out_size)
+
+        #endregion
     }
 }

@@ -8,21 +8,22 @@ namespace Examples
 {
     internal class Program
     {
+        private const int CNT = 100;
+
         private static void Main(string[] args)
         {
-            Compress_SingleStream(1);
-            Compress_SingleStream(4);
-            Compress_MultiStream(1);
-            Compress_MultiStream(4);
-            DoDecompress();
+            Compress_SingleStream("test1.txt.xz", 1);
+            Compress_SingleStream("test1.txt.xz", 4);
+            Compress_MultiStream("test2.txt.xz", 1);
+            Compress_MultiStream("test2.txt.xz", 4);
+            DoDecompress("test1.txt.xz");
+            DoDecompress("test2.txt.xz");
         }
 
-        private const int CNT = 10000;
-
-        private static void Compress_SingleStream(int threads)
+        private static void Compress_SingleStream(string filename, int threads)
         {
             var timer = Stopwatch.StartNew();
-            var fs = File.Create("test.txt.xz");
+            var fs = File.Create(filename);
             var xz = new XZCompressStream(fs, threads);
             using (var writer = new StreamWriter(xz, Encoding.UTF8))
             {
@@ -36,12 +37,11 @@ namespace Examples
             Console.WriteLine($"finished, {timer.Elapsed}");
         }
 
-        private static void Compress_MultiStream(int threads)
+        private static void Compress_MultiStream(string filename, int threads)
         {
             var timer = Stopwatch.StartNew();
 
             // create a new xz file
-            var filename = "test.txt.xz";
             var fs = File.Create(filename);
             var xz = new XZCompressStream(fs, threads);
             using (var writer = new StreamWriter(xz, Encoding.UTF8))
@@ -57,7 +57,7 @@ namespace Examples
             // open the same xz file and append new data
             fs = new FileStream(filename, FileMode.Append, FileAccess.Write, FileShare.None);
             xz = new XZCompressStream(fs, threads);
-            using (var writer = new StreamWriter(xz, Encoding.UTF8))
+            using (var writer = new StreamWriter(xz, new UTF8Encoding(false, true))) // append data should go without BOM
             {
                 for (int i = 0; i < CNT; i++)
                 {
@@ -69,8 +69,18 @@ namespace Examples
             Console.WriteLine($"finished, {timer.Elapsed}");
         }
 
-        private static void DoDecompress()
+        private static void DoDecompress(string filename)
         {
+            using (var reader = new StreamReader(new XZDecompressStream(filename)))
+            {
+                while (true)
+                {
+                    var line = reader.ReadLine();
+                    if (line == null) break;
+
+                    Console.WriteLine($"read from {filename}: {line}");
+                }
+            }
         }
     }
 }

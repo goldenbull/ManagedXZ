@@ -6,7 +6,7 @@ namespace ManagedXZ
 {
     internal static class Native
     {
-        static IntPtr _handle;
+        private static readonly IntPtr _handle;
 
         static Native()
         {

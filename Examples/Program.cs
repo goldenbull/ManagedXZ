@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using ManagedXZ;
 
 namespace Examples
@@ -11,7 +9,23 @@ namespace Examples
     {
         private static void Main(string[] args)
         {
-            XZCompressStream stream = new XZCompressStream();
+            DoCompress();
+            DoDecompress();
+        }
+
+        private static void DoCompress()
+        {
+            var fs = File.Create("test.txt.xz");
+            var xz = new XZCompressStream(fs, 4, 1 << 20);
+            using (var writer = new StreamWriter(xz, Encoding.UTF8))
+            {
+                for (int i = 0; i < 10000; i++)
+                    writer.WriteLine($"this is line {i} written in {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fffffff")}");
+            }
+        }
+
+        private static void DoDecompress()
+        {
         }
     }
 }

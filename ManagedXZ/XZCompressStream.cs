@@ -7,37 +7,50 @@ namespace ManagedXZ
 {
     public class XZCompressStream : Stream
     {
-        public XZCompressStream(string filename) : this(filename, 1)
+        public XZCompressStream(string filename) : this(filename, 1, 6)
         {
         }
 
-        public XZCompressStream(string filename, int threads)
+        public XZCompressStream(string filename, int threads) : this(filename, threads, 6)
+        {
+        }
+
+        public XZCompressStream(string filename, int threads, int level)
         {
             if (filename == null) throw new ArgumentNullException(nameof(filename));
             if (threads <= 0) throw new ArgumentOutOfRangeException(nameof(threads));
+            if (level < 0 || level > 9) throw new ArgumentOutOfRangeException(nameof(level));
 
             _stream = new FileStream(filename, FileMode.Append, FileAccess.Write);
             _threads = threads;
+            _preset = (uint)level;
             Init();
         }
 
-        public XZCompressStream(Stream stream) : this(stream, 1)
+        public XZCompressStream(Stream stream) : this(stream, 1, 6)
         {
         }
 
-        public XZCompressStream(Stream stream, int threads)
+        public XZCompressStream(Stream stream, int threads) : this(stream, threads, 6)
+        {
+        }
+
+        public XZCompressStream(Stream stream, int threads, int level)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
             if (!stream.CanWrite) throw new ArgumentException("stream is not writable");
             if (threads <= 0) throw new ArgumentOutOfRangeException(nameof(threads));
+            if (level < 0 || level > 9) throw new ArgumentOutOfRangeException(nameof(level));
 
             _stream = stream;
             _threads = threads;
+            _preset = (uint)level;
             Init();
         }
 
         private readonly Stream _stream;
         private int _threads;
+        private readonly uint _preset;
         private readonly lzma_stream _lzma_stream = new lzma_stream();
         private IntPtr _inbuf;
         private IntPtr _outbuf;
@@ -45,8 +58,6 @@ namespace ManagedXZ
 
         private void Init()
         {
-            uint preset = 6; // default, TODO
-
             // adjust thread numbers
             if (_threads > Environment.ProcessorCount)
             {
@@ -58,7 +69,7 @@ namespace ManagedXZ
             if (_threads == 1)
             {
                 // single thread compress
-                ret = Native.lzma_easy_encoder(_lzma_stream, preset, lzma_check.LZMA_CHECK_CRC64);
+                ret = Native.lzma_easy_encoder(_lzma_stream, _preset, lzma_check.LZMA_CHECK_CRC64);
             }
             else
             {
@@ -67,7 +78,7 @@ namespace ManagedXZ
                          {
                              threads = (uint)_threads,
                              check = lzma_check.LZMA_CHECK_CRC64,
-                             preset = preset
+                             preset = _preset
                          };
                 var p = GCHandle.Alloc(mt, GCHandleType.Pinned);
                 ret = Native.lzma_stream_encoder_mt(_lzma_stream, mt);

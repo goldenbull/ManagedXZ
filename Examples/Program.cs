@@ -18,6 +18,31 @@ namespace Examples
             Compress_MultiStream("test2.txt.xz", 4);
             DoDecompress("test1.txt.xz");
             DoDecompress("test2.txt.xz");
+            RatioCompare();
+        }
+
+        private static void RatioCompare()
+        {
+            for (int i = 0; i <= 9; i++)
+                CompressFile(@"D:\test\data.bin", $@"D:\test\data{i}.bin.xz", i);
+        }
+
+        private static void CompressFile(string src, string dst, int level)
+        {
+            var t = Stopwatch.StartNew();
+            var buffer = new byte[1 << 20];
+            using (var ins = new FileStream(src, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 1 << 24))
+            using (var outs = new XZCompressStream(dst, 6, level))
+            {
+                while (true)
+                {
+                    var cnt = ins.Read(buffer, 0, buffer.Length);
+                    outs.Write(buffer, 0, cnt);
+                    if (cnt < buffer.Length)
+                        break;
+                }
+            }
+            Console.WriteLine($"level={level}, time={t.Elapsed}");
         }
 
         private static void Compress_SingleStream(string filename, int threads)

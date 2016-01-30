@@ -9,40 +9,21 @@ namespace Examples
     internal class Program
     {
         private const int CNT = 100;
+        private static readonly Random rnd = new Random();
 
         private static void Main(string[] args)
         {
             Compress_SingleStream("test1.txt.xz", 1);
             Compress_SingleStream("test1.txt.xz", 4);
+            Decompress("test1.txt.xz");
+
             Compress_MultiStream("test2.txt.xz", 1);
             Compress_MultiStream("test2.txt.xz", 4);
-            DoDecompress("test1.txt.xz");
-            DoDecompress("test2.txt.xz");
-            RatioCompare();
-        }
+            Decompress("test2.txt.xz");
 
-        private static void RatioCompare()
-        {
-            for (int i = 0; i <= 9; i++)
-                CompressFile(@"D:\test\data.bin", $@"D:\test\data{i}.bin.xz", i);
-        }
+            PerfCompare();
 
-        private static void CompressFile(string src, string dst, int level)
-        {
-            var t = Stopwatch.StartNew();
-            var buffer = new byte[1 << 20];
-            using (var ins = new FileStream(src, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 1 << 24))
-            using (var outs = new XZCompressStream(dst, 6, level))
-            {
-                while (true)
-                {
-                    var cnt = ins.Read(buffer, 0, buffer.Length);
-                    outs.Write(buffer, 0, cnt);
-                    if (cnt < buffer.Length)
-                        break;
-                }
-            }
-            Console.WriteLine($"level={level}, time={t.Elapsed}");
+            CompressInMemory();
         }
 
         private static void Compress_SingleStream(string filename, int threads)
@@ -94,7 +75,7 @@ namespace Examples
             Console.WriteLine($"finished, {timer.Elapsed}");
         }
 
-        private static void DoDecompress(string filename)
+        private static void Decompress(string filename)
         {
             using (var reader = new StreamReader(new XZDecompressStream(filename)))
             {
@@ -106,6 +87,43 @@ namespace Examples
                     Console.WriteLine($"read from {filename}: {line}");
                 }
             }
+        }
+
+        private static void PerfCompare()
+        {
+            // generate a big file
+            var filename = "data.txt";
+            using (var writer = new StreamWriter(filename))
+            {
+                for (int i = 0; i < 1000000; i++)
+                    writer.WriteLine($"{i}: generate random numbers {rnd.NextDouble()}, {rnd.NextDouble()}, {rnd.NextDouble()}");
+            }
+
+            for (int i = 0; i <= 9; i++)
+            {
+                var t = Stopwatch.StartNew();
+                XZUtils.CompressFile(filename, $@"{filename}.L{i}.xz", 6, i);
+                Console.WriteLine($"compress level={i}, time={t.Elapsed}");
+            }
+            for (int i = 0; i <= 9; i++)
+            {
+                var t = Stopwatch.StartNew();
+                XZUtils.DecompressFile($@"{filename}.L{i}.xz", $@"restore_L{i}_{filename}");
+                Console.WriteLine($"decompress level={i}, time={t.Elapsed}");
+            }
+        }
+
+        private static void CompressInMemory()
+        {
+            var sb = new StringBuilder();
+            for (int i = 0; i < 1000; i++)
+                sb.AppendLine($"{i}: a random number {rnd.NextDouble()}");
+            var str = sb.ToString();
+            var bytes = Encoding.UTF8.GetBytes(str);
+            var compressed = XZUtils.CompressBytes(bytes, 0, bytes.Length);
+            var bytes2 = XZUtils.DecompressBytes(compressed, 0, compressed.Length);
+            var str2 = Encoding.UTF8.GetString(bytes2);
+            Console.WriteLine($"identical = {str == str2}");
         }
     }
 }

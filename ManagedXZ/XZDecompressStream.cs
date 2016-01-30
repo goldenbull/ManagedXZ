@@ -35,9 +35,9 @@ namespace ManagedXZ
 
         private void Init()
         {
-            var ret = Native.lzma_auto_decoder(_lzma_stream, ulong.MaxValue, Native.LZMA_CONCATENATED);
-            if (ret != lzma_ret.LZMA_OK)
-                throw new Exception($"Can not create lzma stream: {ret}");
+            var r = Native.lzma_auto_decoder(_lzma_stream, ulong.MaxValue, Native.LZMA_CONCATENATED);
+            if (r != lzma_ret.LZMA_OK)
+                throw new Exception($"Can not create lzma stream: {r}");
 
             _inbuf = Marshal.AllocHGlobal(BUFSIZE);
             _outbuf = Marshal.AllocHGlobal(BUFSIZE);
@@ -67,7 +67,7 @@ namespace ManagedXZ
             if (buffer == null) throw new ArgumentNullException(nameof(buffer));
             if (offset < 0 || offset >= buffer.Length) throw new ArgumentOutOfRangeException(nameof(offset));
             if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
-            if (count + offset > buffer.Length) throw new ArgumentOutOfRangeException(nameof(count), "offset+count>buffer.length");
+            if (count + offset > buffer.Length) throw new ArgumentOutOfRangeException(nameof(count), "offset+count > buffer.length");
             if (count == 0) return 0;
 
             int cTotalRead = 0;

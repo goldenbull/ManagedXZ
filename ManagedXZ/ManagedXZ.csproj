@@ -46,6 +46,7 @@
     <Compile Include="XZCompressStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XZDecompressStream.cs" />
+    <Compile Include="XZUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cert.snk" />

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -15,6 +14,12 @@ namespace ManagedXZ
         {
         }
 
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="threads">number of threads for parallel compress</param>
+        /// <param name="level">0-9, the bigger, the slower, and higher compression ratio</param>
         public XZCompressStream(string filename, int threads, int level)
         {
             if (filename == null) throw new ArgumentNullException(nameof(filename));
@@ -35,6 +40,12 @@ namespace ManagedXZ
         {
         }
 
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="threads">number of threads for parallel compress</param>
+        /// <param name="level">0-9, the bigger, the slower, and higher compression ratio</param>
         public XZCompressStream(Stream stream, int threads, int level)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
@@ -49,7 +60,7 @@ namespace ManagedXZ
         }
 
         private readonly Stream _stream;
-        private int _threads;
+        private readonly int _threads;
         private readonly uint _preset;
         private readonly lzma_stream _lzma_stream = new lzma_stream();
         private IntPtr _inbuf;
@@ -58,33 +69,7 @@ namespace ManagedXZ
 
         private void Init()
         {
-            // adjust thread numbers
-            if (_threads > Environment.ProcessorCount)
-            {
-                Trace.TraceWarning("it's not reasonable to have more threads than processors");
-                _threads = Environment.ProcessorCount;
-            }
-
-            lzma_ret ret;
-            if (_threads == 1)
-            {
-                // single thread compress
-                ret = Native.lzma_easy_encoder(_lzma_stream, _preset, lzma_check.LZMA_CHECK_CRC64);
-            }
-            else
-            {
-                // multi thread compress
-                var mt = new lzma_mt
-                         {
-                             threads = (uint)_threads,
-                             check = lzma_check.LZMA_CHECK_CRC64,
-                             preset = _preset
-                         };
-                var p = GCHandle.Alloc(mt, GCHandleType.Pinned);
-                ret = Native.lzma_stream_encoder_mt(_lzma_stream, mt);
-                p.Free();
-            }
-
+            lzma_ret ret = XZUtils.CreateEncoder(_lzma_stream, _threads, _preset);
             if (ret != lzma_ret.LZMA_OK)
                 throw new Exception($"Can not create lzma stream: {ret}");
 
@@ -120,7 +105,7 @@ namespace ManagedXZ
             if (buffer == null) throw new ArgumentNullException(nameof(buffer));
             if (offset < 0 || offset >= buffer.Length) throw new ArgumentOutOfRangeException(nameof(offset));
             if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
-            if (count + offset > buffer.Length) throw new ArgumentOutOfRangeException(nameof(count), "offset+count>buffer.length");
+            if (count + offset > buffer.Length) throw new ArgumentOutOfRangeException(nameof(count), "offset+count > buffer.length");
             if (count == 0) return;
 
             int bytesProcessed = 0;

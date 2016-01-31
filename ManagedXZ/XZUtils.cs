@@ -53,21 +53,24 @@ namespace ManagedXZ
             try
             {
                 var action = lzma_action.LZMA_RUN;
-                _lzma_stream.next_in = IntPtr.Zero;
+                _lzma_stream.next_in = inbuf;
                 _lzma_stream.avail_in = UIntPtr.Zero;
                 _lzma_stream.next_out = outbuf;
                 _lzma_stream.avail_out = (UIntPtr)BUFSIZE;
                 int read_pos = offset;
                 while (true)
                 {
-                    if (_lzma_stream.avail_in == UIntPtr.Zero && read_pos < offset + count)
+                    if (_lzma_stream.avail_in == UIntPtr.Zero)
                     {
-                        int bytesToProcess = Math.Min(BUFSIZE, offset + count - read_pos);
-                        _lzma_stream.next_in = inbuf;
-                        _lzma_stream.avail_in = (UIntPtr)bytesToProcess;
-                        Marshal.Copy(data, read_pos, inbuf, bytesToProcess);
-                        read_pos += bytesToProcess;
-                        Trace.Assert(read_pos <= offset + count);
+                        if (read_pos < offset + count)
+                        {
+                            int bytesToProcess = Math.Min(BUFSIZE, offset + count - read_pos);
+                            _lzma_stream.next_in = inbuf;
+                            _lzma_stream.avail_in = (UIntPtr)bytesToProcess;
+                            Marshal.Copy(data, read_pos, inbuf, bytesToProcess);
+                            read_pos += bytesToProcess;
+                            Trace.Assert(read_pos <= offset + count);
+                        }
                         if (read_pos == offset + count)
                             action = lzma_action.LZMA_FINISH;
                     }
@@ -115,11 +118,10 @@ namespace ManagedXZ
         public static byte[] CompressBytes(byte[] data, int offset, int count, int threads = 1, int level = 6)
         {
             if (data == null) throw new ArgumentNullException(nameof(data));
-            if (offset < 0 || offset >= data.Length) throw new ArgumentOutOfRangeException(nameof(offset));
+            if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
             if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
             if (count + offset > data.Length) throw new ArgumentOutOfRangeException(nameof(count), "offset+count > data.length");
             if (level < 0 || level > 9) throw new ArgumentOutOfRangeException(nameof(level));
-            if (count == 0) return new byte[0];
 
             var _lzma_stream = new lzma_stream();
             var ret = CreateEncoder(_lzma_stream, threads, (uint)level);
@@ -132,10 +134,9 @@ namespace ManagedXZ
         public static byte[] DecompressBytes(byte[] data, int offset, int count)
         {
             if (data == null) throw new ArgumentNullException(nameof(data));
-            if (offset < 0 || offset >= data.Length) throw new ArgumentOutOfRangeException(nameof(offset));
+            if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
             if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
             if (count + offset > data.Length) throw new ArgumentOutOfRangeException(nameof(count), "offset+count > data.length");
-            if (count == 0) return new byte[0];
 
             var _lzma_stream = new lzma_stream();
             var ret = Native.lzma_auto_decoder(_lzma_stream, ulong.MaxValue, Native.LZMA_CONCATENATED);
@@ -145,11 +146,11 @@ namespace ManagedXZ
             return CodeBuffer(_lzma_stream, data, offset, count);
         }
 
-        public static void CompressFile(string inFile, string outFile, int threads = 1, int level = 6)
+        public static void CompressFile(string inFile, string outFile, bool append = false, int threads = 1, int level = 6)
         {
             var buffer = new byte[1 << 20];
             using (var ins = new FileStream(inFile, FileMode.Open))
-            using (var outs = new XZCompressStream(outFile, threads, level))
+            using (var outs = new XZCompressStream(outFile, threads, level, append))
             {
                 while (true)
                 {

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -10,7 +11,7 @@ namespace ManagedXZ
 
         static Native()
         {
-            // load library
+            // check 32bit or 64bit
             PortableExecutableKinds peKinds;
             ImageFileMachine arch;
             typeof(object).Module.GetPEKind(out peKinds, out arch);
@@ -21,6 +22,10 @@ namespace ManagedXZ
                 dllFilename = "liblzma_x86.dll";
             else
                 throw new Exception(arch + " is not supported yet");
+
+            // try load library. todo: embed native dlls as resource?
+            var thisdir = Assembly.GetExecutingAssembly().Location;
+            dllFilename = Path.Combine(Path.GetDirectoryName(thisdir), dllFilename);
             _handle = LoadLibrary(dllFilename);
             if (_handle == IntPtr.Zero)
                 throw new Exception("can not load " + dllFilename);

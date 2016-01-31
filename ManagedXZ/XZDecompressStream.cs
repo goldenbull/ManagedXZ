@@ -65,7 +65,7 @@ namespace ManagedXZ
         public override int Read(byte[] buffer, int offset, int count)
         {
             if (buffer == null) throw new ArgumentNullException(nameof(buffer));
-            if (offset < 0 || offset >= buffer.Length) throw new ArgumentOutOfRangeException(nameof(offset));
+            if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
             if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
             if (count + offset > buffer.Length) throw new ArgumentOutOfRangeException(nameof(count), "offset+count > buffer.length");
             if (count == 0) return 0;
@@ -111,7 +111,7 @@ namespace ManagedXZ
                     _lzma_stream.avail_out = (UIntPtr)BUFSIZE;
                     read_pos = 0;
                 }
-                
+
                 // do decompress
                 ret = Native.lzma_code(_lzma_stream, action);
                 if (ret != lzma_ret.LZMA_OK && ret != lzma_ret.LZMA_STREAM_END)

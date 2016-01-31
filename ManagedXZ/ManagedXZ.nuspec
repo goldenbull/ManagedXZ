@@ -8,7 +8,7 @@
     <owners>$author$</owners>
     <licenseUrl>https://raw.githubusercontent.com/goldenbull/ManagedXZ/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/goldenbull/ManagedXZ</projectUrl>
-    <iconUrl>https://assets-cdn.github.com/images/icons/emoji/unicode/1f604.png</iconUrl>
+    <iconUrl>https://raw.githubusercontent.com/goldenbull/ManagedXZ/master/ManagedXZ/compress.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>a .net wrapper of liblzma.dll from xz utils. AnyCPU automatically loads x86 or x64 dll at runtime.</description>
     <releaseNotes>add in-memory compress and decompress</releaseNotes>

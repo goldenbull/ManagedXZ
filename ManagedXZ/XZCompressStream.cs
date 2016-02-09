@@ -6,19 +6,19 @@ namespace ManagedXZ
 {
     public class XZCompressStream : Stream
     {
-        public XZCompressStream(string filename) : this(filename, 1, 6, false)
+        public XZCompressStream(string filename) : this(filename, 1, 6, FileMode.Create)
         {
         }
 
-        public XZCompressStream(string filename, bool append) : this(filename, 1, 6, append)
+        public XZCompressStream(string filename, FileMode mode) : this(filename, 1, 6, mode)
         {
         }
 
-        public XZCompressStream(string filename, int threads) : this(filename, threads, 6, false)
+        public XZCompressStream(string filename, int threads) : this(filename, threads, 6, FileMode.Create)
         {
         }
 
-        public XZCompressStream(string filename, bool append, int threads) : this(filename, threads, 6, append)
+        public XZCompressStream(string filename, FileMode mode, int threads) : this(filename, threads, 6, mode)
         {
         }
 
@@ -28,14 +28,14 @@ namespace ManagedXZ
         /// <param name="filename"></param>
         /// <param name="threads">number of threads for parallel compress</param>
         /// <param name="level">0-9, the bigger, the slower, and higher compression ratio</param>
-        /// <param name="append">append xz stream to output file if already exists</param>
-        public XZCompressStream(string filename, int threads, int level, bool append)
+        /// <param name="mode">file mode to create FileStream</param>
+        public XZCompressStream(string filename, int threads, int level, FileMode mode)
         {
             if (filename == null) throw new ArgumentNullException(nameof(filename));
             if (threads <= 0) throw new ArgumentOutOfRangeException(nameof(threads));
             if (level < 0 || level > 9) throw new ArgumentOutOfRangeException(nameof(level));
 
-            _stream = new FileStream(filename, append ? FileMode.Append : FileMode.CreateNew, FileAccess.Write);
+            _stream = new FileStream(filename, mode, FileAccess.Write, FileShare.Read);
             _threads = threads;
             _preset = (uint)level;
             Init();

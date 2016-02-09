@@ -146,11 +146,11 @@ namespace ManagedXZ
             return CodeBuffer(_lzma_stream, data, offset, count);
         }
 
-        public static void CompressFile(string inFile, string outFile, bool append = false, int threads = 1, int level = 6)
+        public static void CompressFile(string inFile, string outFile, FileMode mode = FileMode.Create, int threads = 1, int level = 6)
         {
             var buffer = new byte[1 << 20];
             using (var ins = new FileStream(inFile, FileMode.Open))
-            using (var outs = new XZCompressStream(outFile, threads, level, append))
+            using (var outs = new XZCompressStream(outFile, threads, level, mode))
             {
                 while (true)
                 {

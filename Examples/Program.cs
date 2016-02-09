@@ -102,7 +102,7 @@ namespace Examples
             for (int i = 0; i <= 9; i++)
             {
                 var t = Stopwatch.StartNew();
-                XZUtils.CompressFile(filename, $@"{filename}.L{i}.xz", false, 6, i);
+                XZUtils.CompressFile(filename, $@"{filename}.L{i}.xz", FileMode.Create, 6, i);
                 Console.WriteLine($"compress level={i}, time={t.Elapsed}");
             }
             for (int i = 0; i <= 9; i++)

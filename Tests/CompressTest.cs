@@ -11,7 +11,7 @@ namespace Tests
         private bool TestFile(string srcFilename, string xzFilename)
         {
             var tmpfile = Path.GetTempFileName();
-            XZUtils.CompressFile(srcFilename, tmpfile, true);
+            XZUtils.CompressFile(srcFilename, tmpfile, FileMode.Append);
             var same = FileUtils.CompareContent(xzFilename, tmpfile);
             File.Delete(tmpfile);
             return same;

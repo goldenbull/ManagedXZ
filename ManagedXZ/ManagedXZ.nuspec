@@ -11,7 +11,7 @@
     <iconUrl>https://raw.githubusercontent.com/goldenbull/ManagedXZ/master/ManagedXZ/compress.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>a .net wrapper of liblzma.dll from xz utils. AnyCPU automatically loads x86 or x64 dll at runtime.</description>
-    <releaseNotes>add in-memory compress and decompress</releaseNotes>
+    <releaseNotes>small API change</releaseNotes>
     <copyright>Copyleft 2016</copyright>
     <tags>xz lzma lzma2</tags>
   </metadata>

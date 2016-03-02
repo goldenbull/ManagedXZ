@@ -8,6 +8,7 @@ namespace ManagedXZ
     internal static class Native
     {
         private static readonly IntPtr _handle;
+        public static bool Is64Bit;
 
         static Native()
         {
@@ -17,9 +18,15 @@ namespace ManagedXZ
             typeof(object).Module.GetPEKind(out peKinds, out arch);
             string dllFilename;
             if (arch == ImageFileMachine.AMD64)
+            {
                 dllFilename = "liblzma_amd64.dll";
+                Is64Bit = true;
+            }
             else if (arch == ImageFileMachine.I386)
+            {
                 dllFilename = "liblzma_x86.dll";
+                Is64Bit = false;
+            }
             else
                 throw new Exception(arch + " is not supported yet");
 

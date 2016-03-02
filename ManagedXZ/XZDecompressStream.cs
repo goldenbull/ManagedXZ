@@ -90,7 +90,8 @@ namespace ManagedXZ
                 if (cReadable > 0)
                 {
                     var cCopy = Math.Min(cReadable, count - cTotalRead);
-                    Marshal.Copy(IntPtr.Add(_outbuf, read_pos), buffer, offset + cTotalRead, cCopy);
+                    var p = Native.Is64Bit ? new IntPtr(_outbuf.ToInt64() + read_pos) : new IntPtr(_outbuf.ToInt32() + read_pos);
+                    Marshal.Copy(p, buffer, offset + cTotalRead, cCopy);
                     cTotalRead += cCopy;
                     read_pos += cCopy;
                     Trace.Assert(cTotalRead <= count);

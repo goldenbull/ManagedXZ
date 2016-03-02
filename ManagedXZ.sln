@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagedXZ-net40", "ManagedXZ-net40.csproj", "{F95F1A70-0378-4168-8BA7-417E722A231D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagedXZ-net40", "ManagedXZ-net40\ManagedXZ-net40.csproj", "{F95F1A70-0378-4168-8BA7-417E722A231D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xz_test", "xz_test\xz_test.vcxproj", "{1AE760D9-EE11-4D6F-97E4-9E337D2DF857}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagedXZ-net20", "ManagedXZ-net20.csproj", "{53FDAEBC-2FA7-4BF7-929B-B9111F5B0DCE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagedXZ-net20", "ManagedXZ-net20\ManagedXZ-net20.csproj", "{53FDAEBC-2FA7-4BF7-929B-B9111F5B0DCE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests-net40", "Tests-net40.csproj", "{3CD3FD6B-B7CF-4F33-BDAD-95E8801BF568}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests-net40", "Tests-net40\Tests-net40.csproj", "{3CD3FD6B-B7CF-4F33-BDAD-95E8801BF568}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests-net20", "Tests-net20.csproj", "{3CD3FD6B-B7CF-4F33-BDAD-95E8801BF569}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests-net20", "Tests-net20\Tests-net20.csproj", "{3CD3FD6B-B7CF-4F33-BDAD-95E8801BF569}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -56,23 +56,35 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompressTest.cs" />
-    <Compile Include="DecompressTest.cs" />
-    <Compile Include="Utils.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\src\Tests\CompressTest.cs" />
+    <Compile Include="..\src\Tests\DecompressTest.cs" />
+    <Compile Include="..\src\Tests\Utils.cs" />
+    <Compile Include="..\src\Tests\Program.cs" />
+    <Compile Include="..\src\Tests\Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="Files\0byte.bin" />
-    <None Include="Files\0byte.bin.xz" />
-    <None Include="Files\1byte.0.bin" />
-    <None Include="Files\1byte.0.bin.xz" />
-    <None Include="Files\1byte.1.bin" />
-    <None Include="Files\1byte.1.bin.xz" />
+    <None Include="..\src\Tests\App.config" />
+    <None Include="..\src\Tests\Files\0byte.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\src\Tests\Files\0byte.bin.xz">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\src\Tests\Files\1byte.0.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\src\Tests\Files\1byte.0.bin.xz">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\src\Tests\Files\1byte.1.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\src\Tests\Files\1byte.1.bin.xz">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ManagedXZ\ManagedXZ-net20.csproj">
+    <ProjectReference Include="..\ManagedXZ-net20\ManagedXZ-net20.csproj">
       <Project>{53fdaebc-2fa7-4bf7-929b-b9111f5b0dce}</Project>
       <Name>ManagedXZ-net20</Name>
     </ProjectReference>

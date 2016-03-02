@@ -1,10 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Tests
 {
-    internal static class FileUtils
+    internal static class Utils
     {
+        public static bool SequenceEqual<T>(IList<T> list1, IList<T> list2)
+        {
+            return false;
+        }
+
         public static bool CompareContent(string file1, string file2)
         {
             try

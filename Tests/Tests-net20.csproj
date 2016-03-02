@@ -56,11 +56,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompressTest.cs" />
+    <Compile Include="DecompressTest.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Files\0byte.bin" />
+    <None Include="Files\0byte.bin.xz" />
+    <None Include="Files\1byte.0.bin" />
+    <None Include="Files\1byte.0.bin.xz" />
+    <None Include="Files\1byte.1.bin" />
+    <None Include="Files\1byte.1.bin.xz" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ManagedXZ\ManagedXZ-net20.csproj">
+      <Project>{53fdaebc-2fa7-4bf7-929b-b9111f5b0dce}</Project>
+      <Name>ManagedXZ-net20</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

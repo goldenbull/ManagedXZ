@@ -64,14 +64,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\src\Tests\CompressTest.cs" />
-    <Compile Include="..\src\Tests\DecompressTest.cs" />
     <Compile Include="..\src\Tests\Program.cs" />
     <Compile Include="..\src\Tests\Properties\AssemblyInfo.cs" />
-    <Compile Include="..\src\Tests\Utils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\src\Tests\App.config" />
     <None Include="..\src\Tests\Files\0byte.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

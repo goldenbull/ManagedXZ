@@ -82,6 +82,25 @@ namespace Tests
             return CompareBytes(data1, data2);
         }
 
+        private void TestDispose()
+        {
+            var c = new XZCompressStream("temp1.xz");
+            c.Close();
+            c.Close();
+
+            c = new XZCompressStream("temp2.xz");
+            c.Dispose();
+            c.Dispose();
+
+            var d = new XZDecompressStream("temp1.xz");
+            d.Close();
+            d.Close();
+
+            d = new XZDecompressStream("temp2.xz");
+            d.Dispose();
+            d.Dispose();
+        }
+
         private void RunTests()
         {
             Check(TestCompressFile("0byte.bin", "0byte.bin.xz"), "compress 0byte");
@@ -98,6 +117,9 @@ namespace Tests
             Check(TestDecompressInMemory(XZUtils.CompressBytes(new byte[1] {0}, 0, 1), "1byte.0.bin"), "decompress 1byte[0x00] in memory");
             Check(TestDecompressInMemory(XZUtils.CompressBytes(new byte[1] {1}, 0, 1), "1byte.1.bin"), "decompress 1byte[0x00] in memory");
 
+            TestDispose();
+
+            Console.WriteLine("test finished");
             Console.ReadLine();
         }
 

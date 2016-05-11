@@ -68,7 +68,7 @@ namespace ManagedXZ
             Init();
         }
 
-        private readonly Stream _stream;
+        private Stream _stream;
         private readonly int _threads;
         private readonly uint _preset;
         private readonly lzma_stream _lzma_stream = new lzma_stream();
@@ -152,6 +152,7 @@ namespace ManagedXZ
 
         protected override void Dispose(bool disposing)
         {
+            if (_stream == null) return;
             try
             {
                 // compress all remaining data
@@ -184,6 +185,7 @@ namespace ManagedXZ
                 Marshal.FreeHGlobal(_inbuf);
                 Marshal.FreeHGlobal(_outbuf);
                 _stream.Close();
+                _stream = null;
             }
         }
 

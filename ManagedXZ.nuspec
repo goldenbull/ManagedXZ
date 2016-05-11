@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>ManagedXZ</id>
-    <version>0.3.0</version>
+    <version>1.0.0</version>
     <title>ManagedXZ</title>
     <authors>goldenbull@gmail.com</authors>
     <owners>goldenbull@gmail.com</owners>
@@ -10,8 +10,8 @@
     <projectUrl>https://github.com/goldenbull/ManagedXZ</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/goldenbull/ManagedXZ/master/src/ManagedXZ/compress.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>a .net wrapper of liblzma.dll from xz utils. Both x86 and x64 compatible.</description>
-    <releaseNotes>Add .net 2.0 support</releaseNotes>
+    <description>a .net wrapper of liblzma.dll from xz utils. Both x86 and x64 compatible. Supports net20/net40</description>
+    <releaseNotes>bugfix</releaseNotes>
     <copyright>Copyleft 2016</copyright>
     <tags>xz lzma lzma2 compress</tags>
   </metadata>

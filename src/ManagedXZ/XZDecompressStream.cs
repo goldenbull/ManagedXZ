@@ -24,7 +24,7 @@ namespace ManagedXZ
             Init();
         }
 
-        private readonly Stream _stream;
+        private Stream _stream;
         private readonly lzma_stream _lzma_stream = new lzma_stream();
         private IntPtr _inbuf;
         private IntPtr _outbuf;
@@ -127,10 +127,12 @@ namespace ManagedXZ
 
         protected override void Dispose(bool disposing)
         {
+            if (_stream == null) return;
             Native.lzma_end(_lzma_stream);
             Marshal.FreeHGlobal(_inbuf);
             Marshal.FreeHGlobal(_outbuf);
             _stream.Close();
+            _stream = null;
         }
 
         public override void Flush()

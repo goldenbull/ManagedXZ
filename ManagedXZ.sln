@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29409.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagedXZ-net40", "ManagedXZ-net40\ManagedXZ-net40.csproj", "{F95F1A70-0378-4168-8BA7-417E722A231D}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests-net40", "Tests-net40\Tests-net40.csproj", "{3CD3FD6B-B7CF-4F33-BDAD-95E8801BF568}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests-net20", "Tests-net20\Tests-net20.csproj", "{3CD3FD6B-B7CF-4F33-BDAD-95E8801BF569}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagedXZ-net48", "ManagedXZ-net48\ManagedXZ-net48.csproj", "{8D403FDD-ACEC-4A1C-830B-E3E64CB575D1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,8 +79,23 @@ Global
 		{3CD3FD6B-B7CF-4F33-BDAD-95E8801BF569}.Release|x64.Build.0 = Release|x64
 		{3CD3FD6B-B7CF-4F33-BDAD-95E8801BF569}.Release|x86.ActiveCfg = Release|x86
 		{3CD3FD6B-B7CF-4F33-BDAD-95E8801BF569}.Release|x86.Build.0 = Release|x86
+		{8D403FDD-ACEC-4A1C-830B-E3E64CB575D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D403FDD-ACEC-4A1C-830B-E3E64CB575D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D403FDD-ACEC-4A1C-830B-E3E64CB575D1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8D403FDD-ACEC-4A1C-830B-E3E64CB575D1}.Debug|x64.Build.0 = Debug|Any CPU
+		{8D403FDD-ACEC-4A1C-830B-E3E64CB575D1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8D403FDD-ACEC-4A1C-830B-E3E64CB575D1}.Debug|x86.Build.0 = Debug|Any CPU
+		{8D403FDD-ACEC-4A1C-830B-E3E64CB575D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D403FDD-ACEC-4A1C-830B-E3E64CB575D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D403FDD-ACEC-4A1C-830B-E3E64CB575D1}.Release|x64.ActiveCfg = Release|Any CPU
+		{8D403FDD-ACEC-4A1C-830B-E3E64CB575D1}.Release|x64.Build.0 = Release|Any CPU
+		{8D403FDD-ACEC-4A1C-830B-E3E64CB575D1}.Release|x86.ActiveCfg = Release|Any CPU
+		{8D403FDD-ACEC-4A1C-830B-E3E64CB575D1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {394D05B5-6CF6-442F-964A-DF79DEAA1779}
 	EndGlobalSection
 EndGlobal

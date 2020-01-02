@@ -79,7 +79,7 @@ namespace ManagedXZ
                     // read more data from underlying stream
                     var data = new byte[BUFSIZE];
                     var bytesRead = _stream.Read(data, 0, BUFSIZE);
-                    if (bytesRead < BUFSIZE) action = lzma_action.LZMA_FINISH; // source stream has no more data
+                    if (bytesRead == 0) action = lzma_action.LZMA_FINISH; // source stream has no more data
                     _lzma_stream.next_in = _inbuf;
                     _lzma_stream.avail_in = (UIntPtr)bytesRead;
                     Marshal.Copy(data, 0, _inbuf, bytesRead);

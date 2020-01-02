@@ -4,14 +4,14 @@ using System.IO;
 using System.Text;
 using ManagedXZ;
 
-namespace Examples
+namespace Tests
 {
-    internal class Program
+    internal class Examples
     {
         private const int CNT = 100;
         private static readonly Random rnd = new Random();
 
-        private static void Main(string[] args)
+        private static void RunExamples()
         {
             Compress_SingleStream("test1.txt.xz", 1);
             Compress_SingleStream("test1.txt.xz", 4);

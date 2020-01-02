@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Xml.Xsl;
 
 namespace ManagedXZ
 {
@@ -27,11 +28,11 @@ namespace ManagedXZ
             {
                 // multi thread compress
                 var mt = new lzma_mt
-                         {
-                             threads = (uint)threads,
-                             check = lzma_check.LZMA_CHECK_CRC64,
-                             preset = preset,
-                         };
+                {
+                    threads = (uint) threads,
+                    check = lzma_check.LZMA_CHECK_CRC64,
+                    preset = preset,
+                };
                 return Native.lzma_stream_encoder_mt(stream, mt);
             }
         }
@@ -56,7 +57,7 @@ namespace ManagedXZ
                 _lzma_stream.next_in = inbuf;
                 _lzma_stream.avail_in = UIntPtr.Zero;
                 _lzma_stream.next_out = outbuf;
-                _lzma_stream.avail_out = (UIntPtr)BUFSIZE;
+                _lzma_stream.avail_out = (UIntPtr) BUFSIZE;
                 int read_pos = offset;
                 while (true)
                 {
@@ -66,11 +67,12 @@ namespace ManagedXZ
                         {
                             int bytesToProcess = Math.Min(BUFSIZE, offset + count - read_pos);
                             _lzma_stream.next_in = inbuf;
-                            _lzma_stream.avail_in = (UIntPtr)bytesToProcess;
+                            _lzma_stream.avail_in = (UIntPtr) bytesToProcess;
                             Marshal.Copy(data, read_pos, inbuf, bytesToProcess);
                             read_pos += bytesToProcess;
                             Trace.Assert(read_pos <= offset + count);
                         }
+
                         if (read_pos == offset + count)
                             action = lzma_action.LZMA_FINISH;
                     }
@@ -78,12 +80,12 @@ namespace ManagedXZ
                     var ret = Native.lzma_code(_lzma_stream, action);
                     if (_lzma_stream.avail_out == UIntPtr.Zero || ret == lzma_ret.LZMA_STREAM_END)
                     {
-                        int write_size = BUFSIZE - (int)(uint)_lzma_stream.avail_out;
+                        int write_size = BUFSIZE - (int) (uint) _lzma_stream.avail_out;
                         var tmp = new byte[write_size];
                         Marshal.Copy(outbuf, tmp, 0, write_size);
                         outStream.Write(tmp, 0, write_size);
                         _lzma_stream.next_out = outbuf;
-                        _lzma_stream.avail_out = (UIntPtr)BUFSIZE;
+                        _lzma_stream.avail_out = (UIntPtr) BUFSIZE;
                     }
 
                     if (ret != lzma_ret.LZMA_OK)
@@ -120,15 +122,20 @@ namespace ManagedXZ
             if (data == null) throw new ArgumentNullException(nameof(data));
             if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
             if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
-            if (count + offset > data.Length) throw new ArgumentOutOfRangeException(nameof(count), "offset+count > data.length");
+            if (count + offset > data.Length)
+                throw new ArgumentOutOfRangeException(nameof(count), "offset+count > data.length");
             if (level < 0 || level > 9) throw new ArgumentOutOfRangeException(nameof(level));
 
             var _lzma_stream = new lzma_stream();
-            var ret = CreateEncoder(_lzma_stream, threads, (uint)level);
-            if (ret != lzma_ret.LZMA_OK)
-                throw new Exception($"Can not create lzma stream: {ret}");
+            var ret = CreateEncoder(_lzma_stream, threads, (uint) level);
+            if (ret == lzma_ret.LZMA_OK)
+            {
+                var compressed = CodeBuffer(_lzma_stream, data, offset, count);
+                Native.lzma_end(_lzma_stream);
+                return compressed;
+            }
 
-            return CodeBuffer(_lzma_stream, data, offset, count);
+            throw new Exception($"Can not create lzma stream: {ret}");
         }
 
         public static byte[] DecompressBytes(byte[] data, int offset, int count)
@@ -136,17 +143,23 @@ namespace ManagedXZ
             if (data == null) throw new ArgumentNullException(nameof(data));
             if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
             if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
-            if (count + offset > data.Length) throw new ArgumentOutOfRangeException(nameof(count), "offset+count > data.length");
+            if (count + offset > data.Length)
+                throw new ArgumentOutOfRangeException(nameof(count), "offset+count > data.length");
 
             var _lzma_stream = new lzma_stream();
             var ret = Native.lzma_auto_decoder(_lzma_stream, ulong.MaxValue, Native.LZMA_CONCATENATED);
-            if (ret != lzma_ret.LZMA_OK)
-                throw new Exception($"Can not create lzma stream: {ret}");
+            if (ret == lzma_ret.LZMA_OK)
+            {
+                var decompressed = CodeBuffer(_lzma_stream, data, offset, count);
+                Native.lzma_end(_lzma_stream);
+                return decompressed;
+            }
 
-            return CodeBuffer(_lzma_stream, data, offset, count);
+            throw new Exception($"Can not create lzma stream: {ret}");
         }
 
-        public static void CompressFile(string inFile, string outFile, FileMode mode = FileMode.Create, int threads = 1, int level = 6)
+        public static void CompressFile(string inFile, string outFile, FileMode mode = FileMode.Create, int threads = 1,
+            int level = 6)
         {
             var buffer = new byte[1 << 20];
             using (var ins = new FileStream(inFile, FileMode.Open))

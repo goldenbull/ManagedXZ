@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>1.0.2</Version>
+    <Authors>goldenbull@gmail.com</Authors>
+    <Company />
+    <Description>a .net wrapper of liblzma.dll from xz utils. Both x86 and x64 compatible.</Description>
+    <PackageTags>xz lzma lzma2 compress</PackageTags>
+    <PackageProjectUrl>https://github.com/goldenbull/ManagedXZ</PackageProjectUrl>
+    <PackageReleaseNotes>bugfix. move to netstandard.</PackageReleaseNotes>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>cert.snk</AssemblyOriginatorKeyFile>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageIcon>compress.png</PackageIcon>
+    <PackageIconUrl />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="compress.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="build\" />
+  </ItemGroup>
+
+</Project>

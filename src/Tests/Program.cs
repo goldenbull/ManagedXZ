@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using ManagedXZ;
 
@@ -17,11 +18,12 @@ namespace Tests
             }
         }
 
-        private bool CompareBytes(byte[] arr1, byte[] arr2)
+        private bool BytesEqual(byte[] arr1, byte[] arr2)
         {
             if (arr1.Length != arr2.Length) return false;
             for (int i = 0; i < arr1.Length; i++)
-                if (arr1[i] != arr2[i]) return false;
+                if (arr1[i] != arr2[i])
+                    return false;
             return true;
         }
 
@@ -34,16 +36,17 @@ namespace Tests
             using (var fs1 = f1.OpenRead())
             using (var fs2 = f2.OpenRead())
             {
-                const int SIZE = 1024*1024;
+                const int SIZE = 1024 * 1024;
                 var buffer1 = new byte[SIZE];
                 var buffer2 = new byte[SIZE];
                 while (true)
                 {
                     var cnt = fs1.Read(buffer1, 0, SIZE);
                     fs2.Read(buffer2, 0, SIZE);
-                    if (!CompareBytes(buffer1, buffer2)) return false;
+                    if (!BytesEqual(buffer1, buffer2)) return false;
                     if (cnt < SIZE) break;
                 }
+
                 return true;
             }
         }
@@ -61,7 +64,7 @@ namespace Tests
         {
             var data1 = XZUtils.CompressBytes(input, 0, input.Length);
             var data2 = File.ReadAllBytes(xzFilename);
-            return CompareBytes(data1, data2);
+            return BytesEqual(data1, data2);
         }
 
 
@@ -79,7 +82,27 @@ namespace Tests
         {
             var data1 = XZUtils.DecompressBytes(input, 0, input.Length);
             var data2 = File.ReadAllBytes(binFilename);
-            return CompareBytes(data1, data2);
+            return BytesEqual(data1, data2);
+        }
+
+        private void TestMemoryLeak()
+        {
+            var rnd = new Random();
+            var m0 = Process.GetCurrentProcess().PrivateMemorySize64;
+            for (int i = 0; i < 100000; i++)
+            {
+                var raw = new byte[64];
+                rnd.NextBytes(raw);
+                var compressed = XZUtils.CompressBytes(raw, 0, raw.Length);
+                var decompressed = XZUtils.DecompressBytes(compressed, 0, compressed.Length);
+                if (!BytesEqual(raw, decompressed))
+                    Console.WriteLine("error");
+                if (i % 1000 == 0)
+                    Console.WriteLine(i);
+            }
+
+            var m1 = Process.GetCurrentProcess().PrivateMemorySize64;
+            Console.WriteLine($"{m0:N0} --> {m1:N0}, r={m1 / m0:F2}");
         }
 
         private void TestDispose()
@@ -113,9 +136,14 @@ namespace Tests
             Check(TestDecompressFile("0byte.bin.xz", "0byte.bin"), "decompress 0byte");
             Check(TestDecompressFile("1byte.0.bin.xz", "1byte.0.bin"), "decompress 1byte[0x00]");
             Check(TestDecompressFile("1byte.1.bin.xz", "1byte.1.bin"), "decompress 1byte[0x01]");
-            Check(TestDecompressInMemory(XZUtils.CompressBytes(new byte[0], 0, 0), "0byte.bin"), "decompress 0byte in memory");
-            Check(TestDecompressInMemory(XZUtils.CompressBytes(new byte[1] {0}, 0, 1), "1byte.0.bin"), "decompress 1byte[0x00] in memory");
-            Check(TestDecompressInMemory(XZUtils.CompressBytes(new byte[1] {1}, 0, 1), "1byte.1.bin"), "decompress 1byte[0x00] in memory");
+            Check(TestDecompressInMemory(XZUtils.CompressBytes(new byte[0], 0, 0), "0byte.bin"),
+                "decompress 0byte in memory");
+            Check(TestDecompressInMemory(XZUtils.CompressBytes(new byte[1] {0}, 0, 1), "1byte.0.bin"),
+                "decompress 1byte[0x00] in memory");
+            Check(TestDecompressInMemory(XZUtils.CompressBytes(new byte[1] {1}, 0, 1), "1byte.1.bin"),
+                "decompress 1byte[0x00] in memory");
+
+            TestMemoryLeak();
 
             TestDispose();
 

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>ManagedXZ</id>
+    <version>1.0.1</version>
+    <title>ManagedXZ</title>
+    <authors>goldenbull@gmail.com</authors>
+    <owners>goldenbull@gmail.com</owners>
+    <licenseUrl>https://raw.githubusercontent.com/goldenbull/ManagedXZ/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/goldenbull/ManagedXZ</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/goldenbull/ManagedXZ/master/src/ManagedXZ/compress.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>a .net wrapper of liblzma.dll from xz utils. Both x86 and x64 compatible. Supports net40/net48</description>
+    <releaseNotes>add dotnet 4.8 support, remove dotnet 2.0 support</releaseNotes>
+    <copyright>Copyleft 2016</copyright>
+    <tags>xz lzma lzma2 compress</tags>
+  </metadata>
+  <files>
+    <file src="ManagedXZ-net40/bin/Release/ManagedXZ.dll" target="/lib/net40/ManagedXZ.dll" />
+    <file src="ManagedXZ-net48/bin/Release/ManagedXZ.dll" target="/lib/net48/ManagedXZ.dll" />
+    <file src="src/ManagedXZ/build/liblzma_x86.dll" target="/build/liblzma_x86.dll" />
+    <file src="src/ManagedXZ/build/liblzma_amd64.dll" target="/build/liblzma_amd64.dll" />
+    <file src="src/ManagedXZ/build/ManagedXZ.targets" target="/build/ManagedXZ.targets" />
+  </files>
+</package>

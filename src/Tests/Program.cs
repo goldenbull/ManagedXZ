@@ -89,7 +89,8 @@ namespace Tests
         {
             var rnd = new Random();
             var m0 = Process.GetCurrentProcess().PrivateMemorySize64;
-            for (int i = 0; i < 100000; i++)
+            var N = 5000;
+            for (int i = 0; i < N; i++)
             {
                 var raw = new byte[64];
                 rnd.NextBytes(raw);
@@ -97,12 +98,12 @@ namespace Tests
                 var decompressed = XZUtils.DecompressBytes(compressed, 0, compressed.Length);
                 if (!BytesEqual(raw, decompressed))
                     Console.WriteLine("error");
-                if (i % 1000 == 0)
-                    Console.WriteLine(i);
+                if (i % 1000 == 0 || i == N - 1)
+                {
+                    var m1 = Process.GetCurrentProcess().PrivateMemorySize64;
+                    Console.WriteLine($"{i}  {m0:N0} --> {m1:N0}, r={m1 * 1.0 / m0:F2}");
+                }
             }
-
-            var m1 = Process.GetCurrentProcess().PrivateMemorySize64;
-            Console.WriteLine($"{m0:N0} --> {m1:N0}, r={m1 / m0:F2}");
         }
 
         private void TestDispose()

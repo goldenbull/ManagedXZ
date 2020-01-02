@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>ManagedXZ</id>
+    <version>1.0.2</version>
+    <title>ManagedXZ</title>
+    <authors>goldenbull@gmail.com</authors>
+    <owners>goldenbull@gmail.com</owners>
+    <projectUrl>https://github.com/goldenbull/ManagedXZ</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+	<icon>compress.png</icon>
+    <description>a .net wrapper of liblzma.dll from xz utils</description>
+    <releaseNotes>bugfix. move to netstandard.</releaseNotes>
+    <copyright>Copyleft 2016</copyright>
+    <tags>xz lzma lzma2 compress</tags>
+	<license type="expression">GPL-3.0-or-later</license>
+    <dependencies>
+      <group targetFramework="netstandard2.0">
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\netstandard2.0\ManagedXZ.dll" target="lib\netstandard2.0\ManagedXZ.dll" />
+    <file src="build\liblzma_amd64.dll" target="build\liblzma_amd64.dll" />
+    <file src="build\liblzma_x86.dll" target="build\liblzma_x86.dll" />
+    <file src="build\ManagedXZ.targets" target="build\ManagedXZ.targets" />
+    <file src="compress.png" target="compress.png" />
+  </files>
+</package>

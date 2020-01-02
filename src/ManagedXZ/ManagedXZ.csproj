@@ -12,7 +12,7 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>cert.snk</AssemblyOriginatorKeyFile>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageIcon>compress.png</PackageIcon>
     <PackageIconUrl />
   </PropertyGroup>
@@ -27,5 +27,12 @@
   <ItemGroup>
     <Folder Include="build\" />
   </ItemGroup>
-
+  
+  <ItemGroup>
+    <NativeLibs Include="$(MSBuildThisFileDirectory)build\*.dll" />
+    <None Include="@(NativeLibs)">
+      <Link>%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

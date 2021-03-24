@@ -16,6 +16,7 @@
 	<license type="expression">GPL-3.0-or-later</license>
     <dependencies>
       <group targetFramework="netstandard2.0">
+        <dependency id="System.Buffers" version="4.5.1" />
       </group>
     </dependencies>
   </metadata>

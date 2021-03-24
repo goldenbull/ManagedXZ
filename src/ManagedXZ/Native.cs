@@ -31,11 +31,23 @@ namespace ManagedXZ
                 throw new Exception(arch + " is not supported yet");
 
             // try load library. todo: embed native dlls as resource?
-            var thisdir = Assembly.GetExecutingAssembly().Location;
-            dllFilename = Path.Combine(Path.GetDirectoryName(thisdir), dllFilename);
-            _handle = LoadLibrary(dllFilename);
+            string dllPath = GetDllPath(Assembly.GetExecutingAssembly().Location, dllFilename);
+            if (dllPath == null)
+            {
+                var assembly = Assembly.GetEntryAssembly();
+                if (assembly != null)
+                    dllPath = GetDllPath(assembly.Location, dllFilename);
+            }
+
+            if (dllPath == null)
+                dllPath = GetDllPath(AppDomain.CurrentDomain.BaseDirectory, dllFilename);
+
+            if (dllPath == null)
+                throw new Exception("Can not find " + dllFilename);
+
+            _handle = LoadLibrary(dllPath);
             if (_handle == IntPtr.Zero)
-                throw new Exception("can not load " + dllFilename);
+                throw new Exception("Can not load " + dllFilename);
 
             // get function pointers
             lzma_code = GetFunction<lzma_code_delegate>("lzma_code");
@@ -44,6 +56,22 @@ namespace ManagedXZ
             lzma_easy_encoder = GetFunction<lzma_easy_encoder_delegate>("lzma_easy_encoder");
             lzma_stream_encoder_mt = GetFunction<lzma_stream_encoder_mt_delegate>("lzma_stream_encoder_mt");
             lzma_auto_decoder = GetFunction<lzma_auto_decoder_delegate>("lzma_auto_decoder");
+        }
+
+        private static string GetDllPath(string path, string fileName)
+        {
+            if (File.Exists(path))
+                path = Path.GetDirectoryName(path);
+
+            if (string.IsNullOrEmpty(path))
+                path = fileName;
+            else
+                path = Path.Combine(path, fileName);
+
+            if (File.Exists(path))
+                return path;
+
+            return null;
         }
 
         public static void CheckSize()

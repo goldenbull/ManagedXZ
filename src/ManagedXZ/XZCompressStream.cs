@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -139,9 +140,10 @@ namespace ManagedXZ
                 // check output buffer
                 if (_lzma_stream.avail_out == UIntPtr.Zero)
                 {
-                    byte[] data = new byte[BUFSIZE];
-                    Marshal.Copy(_outbuf, data, 0, data.Length);
-                    _stream.Write(data, 0, data.Length);
+                    var data = ArrayPool<byte>.Shared.Rent(BUFSIZE);
+                    Marshal.Copy(_outbuf, data, 0, BUFSIZE);
+                    _stream.Write(data, 0, BUFSIZE);
+                    ArrayPool<byte>.Shared.Return(data);
 
                     // Reset next_out and avail_out.
                     _lzma_stream.next_out = _outbuf;
@@ -166,9 +168,11 @@ namespace ManagedXZ
                     // write output buffer to underlying stream
                     if (_lzma_stream.avail_out == UIntPtr.Zero || ret == lzma_ret.LZMA_STREAM_END)
                     {
-                        byte[] data = new byte[BUFSIZE - (uint)_lzma_stream.avail_out];
-                        Marshal.Copy(_outbuf, data, 0, data.Length);
-                        _stream.Write(data, 0, data.Length);
+                        int size = (int)(BUFSIZE - (uint) _lzma_stream.avail_out);
+                        var data = ArrayPool<byte>.Shared.Rent(size);
+                        Marshal.Copy(_outbuf, data, 0, size);
+                        _stream.Write(data, 0, size);
+                        ArrayPool<byte>.Shared.Return(data);
 
                         // Reset next_out and avail_out.
                         _lzma_stream.next_out = _outbuf;

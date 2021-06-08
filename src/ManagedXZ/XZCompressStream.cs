@@ -55,7 +55,7 @@ namespace ManagedXZ
         /// <param name="stream"></param>
         /// <param name="threads">number of threads for parallel compress</param>
         /// <param name="level">0-9, the bigger, the slower, and higher compression ratio</param>
-        public XZCompressStream(Stream stream, int threads, int level)
+        public XZCompressStream(Stream stream, int threads, int level, bool leaveOpen = false)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
             if (!stream.CanWrite) throw new ArgumentException("stream is not writable");
@@ -65,6 +65,7 @@ namespace ManagedXZ
             _stream = stream;
             _threads = threads;
             _preset = (uint)level;
+            _leaveOpen = leaveOpen;
             Init();
         }
 
@@ -75,6 +76,7 @@ namespace ManagedXZ
         private IntPtr _inbuf;
         private IntPtr _outbuf;
         private const int BUFSIZE = 1024*32; // we do not need a big outbuf
+        private bool _leaveOpen;
 
         private void Init()
         {
@@ -184,8 +186,11 @@ namespace ManagedXZ
                 Native.lzma_end(_lzma_stream);
                 Marshal.FreeHGlobal(_inbuf);
                 Marshal.FreeHGlobal(_outbuf);
-                _stream.Close();
-                _stream = null;
+                if (!_leaveOpen)
+                {
+                    _stream.Close();
+                    _stream = null;
+                }
             }
         }
 

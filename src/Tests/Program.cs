@@ -127,21 +127,21 @@ namespace Tests
 
         private void RunTests()
         {
-            Check(TestCompressFile("0byte.bin", "0byte.bin.xz"), "compress 0byte");
-            Check(TestCompressFile("1byte.0.bin", "1byte.0.bin.xz"), "compress 1byte[0x00]");
-            Check(TestCompressFile("1byte.1.bin", "1byte.1.bin.xz"), "compress 1byte[0x01]");
-            Check(TestCompressInMemory(new byte[0], "0byte.bin.xz"), "compress 0byte in memory");
-            Check(TestCompressInMemory(new byte[1] {0}, "1byte.0.bin.xz"), "compress 1byte[0x00] in memory");
-            Check(TestCompressInMemory(new byte[1] {1}, "1byte.1.bin.xz"), "compress 1byte[0x00] in memory");
+            Check(TestCompressFile(@"Files\0byte.bin", @"Files\0byte.bin.xz"), "compress 0byte");
+            Check(TestCompressFile(@"Files\1byte.0.bin", @"Files\1byte.0.bin.xz"), "compress 1byte[0x00]");
+            Check(TestCompressFile(@"Files\1byte.1.bin", @"Files\1byte.1.bin.xz"), "compress 1byte[0x01]");
+            Check(TestCompressInMemory(Array.Empty<byte>(), @"Files\0byte.bin.xz"), "compress 0byte in memory");
+            Check(TestCompressInMemory(new byte[] {0}, @"Files\1byte.0.bin.xz"), "compress 1byte[0x00] in memory");
+            Check(TestCompressInMemory(new byte[] {1}, @"Files\1byte.1.bin.xz"), "compress 1byte[0x00] in memory");
 
-            Check(TestDecompressFile("0byte.bin.xz", "0byte.bin"), "decompress 0byte");
-            Check(TestDecompressFile("1byte.0.bin.xz", "1byte.0.bin"), "decompress 1byte[0x00]");
-            Check(TestDecompressFile("1byte.1.bin.xz", "1byte.1.bin"), "decompress 1byte[0x01]");
-            Check(TestDecompressInMemory(XZUtils.CompressBytes(new byte[0], 0, 0), "0byte.bin"),
+            Check(TestDecompressFile(@"Files\0byte.bin.xz", @"Files\0byte.bin"), "decompress 0byte");
+            Check(TestDecompressFile(@"Files\1byte.0.bin.xz", @"Files\1byte.0.bin"), "decompress 1byte[0x00]");
+            Check(TestDecompressFile(@"Files\1byte.1.bin.xz", @"Files\1byte.1.bin"), "decompress 1byte[0x01]");
+            Check(TestDecompressInMemory(XZUtils.CompressBytes(Array.Empty<byte>(), 0, 0), @"Files\0byte.bin"),
                 "decompress 0byte in memory");
-            Check(TestDecompressInMemory(XZUtils.CompressBytes(new byte[1] {0}, 0, 1), "1byte.0.bin"),
+            Check(TestDecompressInMemory(XZUtils.CompressBytes(new byte[] {0}, 0, 1), @"Files\1byte.0.bin"),
                 "decompress 1byte[0x00] in memory");
-            Check(TestDecompressInMemory(XZUtils.CompressBytes(new byte[1] {1}, 0, 1), "1byte.1.bin"),
+            Check(TestDecompressInMemory(XZUtils.CompressBytes(new byte[] {1}, 0, 1), @"Files\1byte.1.bin"),
                 "decompress 1byte[0x00] in memory");
 
             TestMemoryLeak();

@@ -3,9 +3,12 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
     <Version>1.0.2</Version>
+    <PackageId>zgabi.ManagedXZ</PackageId>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Authors>goldenbull@gmail.com</Authors>
     <Company />
     <Description>a .net wrapper of liblzma.dll from xz utils. Both x86 and x64 compatible.</Description>
+    <Copyright>Copyleft 2016</Copyright>
     <PackageTags>xz lzma lzma2 compress</PackageTags>
     <PackageProjectUrl>https://github.com/goldenbull/ManagedXZ</PackageProjectUrl>
     <PackageReleaseNotes>bugfix. move to netstandard.</PackageReleaseNotes>
@@ -27,6 +30,7 @@
 
   <ItemGroup>
     <Folder Include="build\" />
+    <None Include="build\**" Pack="True" PackagePath="build\" />
   </ItemGroup>
   
   <ItemGroup>

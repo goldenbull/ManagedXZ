@@ -110,7 +110,7 @@ namespace ManagedXZ
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
         /// <param name="count"></param>
-        public override void Write(byte[] buffer, int offset, int count)
+        public override unsafe void Write(byte[] buffer, int offset, int count)
         {
             if (buffer == null) throw new ArgumentNullException(nameof(buffer));
             if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
@@ -140,10 +140,14 @@ namespace ManagedXZ
                 // check output buffer
                 if (_lzma_stream.avail_out == UIntPtr.Zero)
                 {
+#if NET6_0_OR_GREATER
+                    _stream.Write(new Span<byte>((byte*)_outbuf, BUFSIZE));
+#else
                     var data = ArrayPool<byte>.Shared.Rent(BUFSIZE);
                     Marshal.Copy(_outbuf, data, 0, BUFSIZE);
                     _stream.Write(data, 0, BUFSIZE);
                     ArrayPool<byte>.Shared.Return(data);
+#endif
 
                     // Reset next_out and avail_out.
                     _lzma_stream.next_out = _outbuf;
@@ -152,7 +156,7 @@ namespace ManagedXZ
             }
         }
 
-        protected override void Dispose(bool disposing)
+        protected override unsafe void Dispose(bool disposing)
         {
             if (_stream == null) return;
             try
@@ -169,10 +173,14 @@ namespace ManagedXZ
                     if (_lzma_stream.avail_out == UIntPtr.Zero || ret == lzma_ret.LZMA_STREAM_END)
                     {
                         int size = (int)(BUFSIZE - (uint) _lzma_stream.avail_out);
+#if NET6_0_OR_GREATER
+                        _stream.Write(new Span<byte>((byte*)_outbuf, size));
+#else
                         var data = ArrayPool<byte>.Shared.Rent(size);
                         Marshal.Copy(_outbuf, data, 0, size);
                         _stream.Write(data, 0, size);
                         ArrayPool<byte>.Shared.Return(data);
+#endif
 
                         // Reset next_out and avail_out.
                         _lzma_stream.next_out = _outbuf;

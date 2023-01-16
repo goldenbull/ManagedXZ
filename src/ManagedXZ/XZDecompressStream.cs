@@ -63,7 +63,7 @@ namespace ManagedXZ
         /// <param name="offset"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public override int Read(byte[] buffer, int offset, int count)
+        public override unsafe int Read(byte[] buffer, int offset, int count)
         {
             if (buffer == null) throw new ArgumentNullException(nameof(buffer));
             if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
@@ -78,6 +78,12 @@ namespace ManagedXZ
                 if (_lzma_stream.avail_in == UIntPtr.Zero && action == lzma_action.LZMA_RUN)
                 {
                     // read more data from underlying stream
+#if NET6_0_OR_GREATER
+                    var bytesRead = _stream.Read(new Span<byte>((byte*)_inbuf, BUFSIZE));
+                    if (bytesRead == 0) action = lzma_action.LZMA_FINISH; // source stream has no more data
+                    _lzma_stream.next_in = _inbuf;
+                    _lzma_stream.avail_in = (UIntPtr)bytesRead;
+#else
                     var data = ArrayPool<byte>.Shared.Rent(BUFSIZE);
                     var bytesRead = _stream.Read(data, 0, BUFSIZE);
                     if (bytesRead == 0) action = lzma_action.LZMA_FINISH; // source stream has no more data
@@ -85,6 +91,7 @@ namespace ManagedXZ
                     _lzma_stream.avail_in = (UIntPtr)bytesRead;
                     Marshal.Copy(data, 0, _inbuf, bytesRead);
                     ArrayPool<byte>.Shared.Return(data);
+#endif
                 }
 
                 // try to read from existing outbuf
